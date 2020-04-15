@@ -1,17 +1,22 @@
-CREATE TABLE Categoria
+CREATE TABLE categoria
 (
     categoria varchar(20) PRIMARY KEY
 );
 
-CREATE TABLE Modello
+CREATE TABLE modello
 (
     nome_modello             varchar(20) PRIMARY KEY,
     lunghezza                numeric(6, 2) NOT NULL,
+    CHECK (lunghezza BETWEEN 0 AND 500),
     larghezza                numeric(6, 2) NOT NULL,
+    CHECK (larghezza BETWEEN 0 AND 250),
     altezza                  numeric(6, 2) NOT NULL,
+    CHECK (altezza BETWEEN 0 AND 250),
     n_porte                  smallint      NOT NULL,
+    CHECK ( n_porte BETWEEN 2 AND 5),
     consumo                  numeric(4, 2),
     velocita                 smallint      NOT NULL,
+    CHECK (velocita BETWEEN 30 AND 350),
     motorizzazione           smallint,
     cap_bagagliaio           numeric(6, 2) NOT NULL,
     t_oraria                 numeric(5, 2) NOT NULL,
@@ -28,7 +33,7 @@ CREATE TABLE Modello
     airbag                   bool
 );
 
-CREATE TABLE Parcheggio
+CREATE TABLE parcheggio
 (
     nome_parcheggio varchar(20) PRIMARY KEY,
     n_posti         numeric        NOT NULL,
@@ -57,6 +62,7 @@ CREATE TABLE vettura
 (
     nome_vettura   varchar(10) PRIMARY KEY,
     targa          varchar(7) UNIQUE NOT NULL,
+    CHECK (targa ~ '/^[A-Z]{2}[0-9]{3}[A-Z]{2}$/i'),
     chilometraggio numeric           NOT NULL,
     seggiolini     numeric,
     colore         varchar(20)       NOT NULL,
@@ -65,7 +71,7 @@ CREATE TABLE vettura
     sede           varchar(20) REFERENCES parcheggio
 );
 
-CREATE TABLE Rifornimenti
+CREATE TABLE rifornimenti
 (
     targa          varchar(7) references Vettura (targa),
     chilometraggio numeric,

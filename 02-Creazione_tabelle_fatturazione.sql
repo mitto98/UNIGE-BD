@@ -4,6 +4,7 @@ CREATE TABLE carta
     circuito     varchar(16)    NOT NULL,
     intestatario varchar(30)    NOT NULL,
     scadenza     date           NOT NULL,
+    CHECK (scadenza > NOW()),
     PRIMARY KEY (numero, circuito, intestatario, scadenza)
 );
 
@@ -23,7 +24,7 @@ CREATE TABLE metodo_pagamento
     circuito_carta     varchar(10),
     scadenza_carta     date,
     iban               char(27),
-    intestatario_conto  varchar(30),
+    intestatario_conto varchar(30),
     FOREIGN KEY (iban, intestatario_conto)
         REFERENCES rid (iban, intestatario)
         ON UPDATE CASCADE
@@ -43,15 +44,16 @@ CREATE TABLE tipo
     riduzione_eta numeric
 );
 
-CREATE TABLE abbonamento (
-	data_inizio timestamp NOT NULL,
-	data_fine timestamp NOT NULL,
-	data_bonus date,
-	bonus_rottamazione numeric(3,0),
-	pin_carta	numeric(4,0) NOT NULL,
-	smart_card integer NOT NULL references metodo_pagamento,
-	tipo varchar(20) NOT NULL references tipo,
-	PRIMARY KEY (smart_card),
-	UNIQUE (smart_card, data_inizio)
-
+CREATE TABLE abbonamento
+(
+    data_inizio        timestamp     NOT NULL,
+    data_fine          timestamp     NOT NULL,
+    data_bonus         date,
+    bonus_rottamazione numeric(3, 0),
+    pin_carta          numeric(4, 0) NOT NULL,
+    smart_card         integer       NOT NULL references metodo_pagamento,
+    tipo               varchar(20)   NOT NULL references tipo,
+    PRIMARY KEY (smart_card),
+    UNIQUE (smart_card, data_inizio),
+    CHECK (data_inizio < data_fine)
 );

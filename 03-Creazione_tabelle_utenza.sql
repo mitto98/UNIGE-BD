@@ -1,6 +1,7 @@
 CREATE TABLE utente
 (
     email      varchar(30) PRIMARY KEY,
+    CHECK (email ~ '/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i'),
     piva       integer REFERENCES azienda
         ON UPDATE CASCADE
         ON DELETE CASCADE,
@@ -34,16 +35,18 @@ CREATE TABLE prenotazione
             ON DELETE NO ACTION
             ON UPDATE NO ACTION,
     FOREIGN KEY (smart_card)
-        REFERENCES abbonamento (smart_card)
+        REFERENCES abbonamento (smart_card),
+    CHECK (data_ora_inizio < data_ora_fine)
 );
 
 CREATE TABLE modifica_prenotazione
 (
-    numero_prenotazione    int REFERENCES prenotazione,
-    data_ora_rinuncia      timestamp,
-    nuovaD_data_ora_inizio timestamp,
-    nuova_data_ora_rest    timestamp,
-    PRIMARY KEY (numero_prenotazione)
+    numero_prenotazione   int REFERENCES prenotazione,
+    data_ora_rinuncia     timestamp,
+    nuova_data_ora_inizio timestamp,
+    nuova_data_ora_fine   timestamp,
+    PRIMARY KEY (numero_prenotazione),
+    CHECK (nuova_data_ora_inizio < nuova_data_ora_fine)
 );
 
 CREATE TABLE utilizzo
@@ -56,5 +59,7 @@ CREATE TABLE utilizzo
     data_ora_ritiro           timestamp     NOT NULL,
     data_ora_riconsegna       timestamp,
     chilometraggio_riconsegna numeric(6, 0),
-    PRIMARY KEY (numero_prenotazione, data_ora_ritiro)
+    PRIMARY KEY (numero_prenotazione, data_ora_ritiro),
+    CHECK (data_ora_ritiro < data_ora_riconsegna),
+    CHECK (chilometraggio_ritiro < chilometraggio_riconsegna)
 );

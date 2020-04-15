@@ -45,8 +45,8 @@ CREATE TABLE sede
     civico    numeric(4, 0) NOT NULL,
     via       varchar(20)   NOT NULL,
     tipo_sede varchar(9)    NOT NULL,
-    FOREIGN KEY (nazione, citta, cap, via, civico)
-        REFERENCES indirizzo (nazione, citta, cap, via, civico)
+    CHECK (tipo_sede LIKE 'LEGALE' OR tipo_sede LIKE 'OPERATIVA'),
+    FOREIGN KEY (nazione, citta, cap, via, civico) REFERENCES indirizzo (nazione, citta, cap, via, civico)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
@@ -56,12 +56,14 @@ CREATE TABLE documento
     n_documento       varchar(10) PRIMARY KEY,
     rilascio          date          NOT NULL,
     scadenza          date          NOT NULL,
+    CHECK (scadenza < NOW()),
     professione       varchar(30)   NOT NULL,
     nome              varchar(10)   NOT NULL,
     cognome           varchar(15)   NOT NULL,
     is_patente        bool          NOT NULL,
     luogo_nascita     varchar(20)   NOT NULL,
     data_nascita      date          NOT NULL,
+    CHECK (data_nascita < (NOW() - interval '18 year')),
     categoria_patente char(1),
     nazione           varchar(20)   NOT NULL,
     citta             varchar(20)   NOT NULL,
@@ -90,11 +92,12 @@ CREATE TABLE conducente
 CREATE TABLE persona
 (
     cf            char(16)    NOT NULL PRIMARY KEY,
+    CHECK (cf ~ '/^[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]$/i'),
     id_conducente int references conducente
         ON DELETE CASCADE,
     telefono      varchar(11) NOT NULL,
     eta           numeric,
+    CHECK (eta >= 18),
     n_documento   varchar(10) NOT NULL references documento,
     n_patente     varchar(10) NOT NULL references documento
-
 );
