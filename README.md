@@ -23,6 +23,11 @@ Si assume che tutte le misure siano espresse in centimetri
 18. In `utilizzo`, `data_ora_ritiro` deve essere prima di `data_ora_riconsegna`
 19. In `utilizzo`, `chilometraggio_ritiro` deve essere prima di `chilometraggio_riconsegna`
 
+## Vincoli di stato
+1.  Una prenotazione puo essere fatta solo entro 15 minuti dal ritiro
+2.  Logging modifiche e chiusura prenotazione
+3.  Coerenza date modifica prenotazione
+
 
 ## Roadmap
 ### Giorno 1
