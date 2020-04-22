@@ -27,6 +27,7 @@ Si assume che tutte le misure siano espresse in centimetri
 1.  Una prenotazione puo essere fatta solo entro 15 minuti dal ritiro
 2.  Logging modifiche e chiusura prenotazione
 3.  Coerenza date modifica prenotazione
+4.  Non si può inserire una carta scaduta
 
 
 ## Roadmap
@@ -37,7 +38,9 @@ Gestione delle diverse tipologie di utenti, conducenti, bonus e modalità di pag
 Per le parti non assegnate coprire solo na porzione minimale  
 
 ### Giorno 2
-Fare i trigger per rispettare i vincoli
+Fare i trigger per rispettare i vincoli:
+* Coprire la porzione di basi di dati relativa a vetture, modelli, parcheggi, abbonamenti, prenotazioni e effettivi utilizzi.  
+* Gestione delle diverse tipologie di utenti, conducenti abilitati, bonus e modalità di pagamento.
 
 ### Giorno 3
 INSERT  

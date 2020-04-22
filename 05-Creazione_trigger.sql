@@ -64,3 +64,23 @@ CREATE TRIGGER check_coerenza_date_prenotazione
     ON modifica_prenotazione
     FOR EACH ROW
 EXECUTE PROCEDURE check_coerenza_date_prenotazione();
+
+-- Una prenotazione puo essere fatta solo entro 15 minuti dal ritiro
+CREATE OR REPLACE FUNCTION check_validita_carta()
+    RETURNS TRIGGER AS
+$check_validita_carta$
+BEGIN
+    IF NEW.scadenza >= NOW()
+    THEN
+        RAISE EXCEPTION 'La carta è scaduta';
+    ELSE
+        RETURN NEW;
+    END IF;
+END;
+$check_validita_carta$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_validita_carta
+    BEFORE INSERT OR UPDATE
+    ON carta
+    FOR EACH ROW
+EXECUTE PROCEDURE check_validita_carta();
