@@ -39,11 +39,10 @@ Per le parti non assegnate coprire solo na porzione minimale
 
 ### Giorno 2
 Fare i trigger per rispettare i vincoli:
-* Coprire la porzione di basi di dati relativa a vetture, modelli, parcheggi, abbonamenti, prenotazioni e effettivi utilizzi.  
+* Coprire la porzione di basi di dati relativa a vetture, modelli, parcheggi, abbonamenti, prenotazioni e effettivi utilizzi.
 * Gestione delle diverse tipologie di utenti, conducenti abilitati, bonus e modalità di pagamento.
 
 ### Giorno 3
-INSERT  
 Inserire i valori dentro le tabelle
 
 ### Giorno 4
