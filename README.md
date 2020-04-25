@@ -41,7 +41,7 @@ Fare i trigger per rispettare i vincoli:
 * Coprire la porzione di basi di dati relativa a vetture, modelli, parcheggi, abbonamenti, prenotazioni e effettivi utilizzi.
 * Gestione delle diverse tipologie di utenti, conducenti abilitati, bonus e modalità di pagamento.
 
-### Giorno 3 ✔
+### Giorno 3 ✔
 Inserire i valori dentro le tabelle base
 
 ### Giorno 4 ❌
