@@ -25,6 +25,9 @@ CREATE TABLE azienda
     data_nascita_rappresentante date                             NOT NULL
 );
 
+-- A mio avviso non è necessario creare una tabella per immagazzinare gli indirizzi,
+--  vengono comunque memorizzati nelle tabelle che la riferiscono, e non c'è necessità
+--  di avere un unica sorgente di verità per gli indirizzi presenti nel sistema.
 CREATE TABLE indirizzo
 (
     nazione varchar(20)   NOT NULL,
@@ -97,7 +100,7 @@ CREATE TABLE persona
         ON DELETE CASCADE,
     telefono      varchar(11) NOT NULL,
     eta           numeric,
-    CHECK (eta >= 18),
+    CHECK (18 < eta),
     n_documento   varchar(10) NOT NULL references documento,
     n_patente     varchar(10) NOT NULL references documento
 );
@@ -166,7 +169,7 @@ CREATE TABLE vettura
 (
     nome_vettura   varchar(10) PRIMARY KEY,
     targa          varchar(7) UNIQUE NOT NULL,
-    CHECK (targa ~ '/^[A-Z]{2}[0-9]{3}[A-Z]{2}$/i'),
+    CHECK (targa ~ '^[A-Z]{2}[0-9]{3}[A-Z]{2}$'),
     chilometraggio numeric           NOT NULL,
     seggiolini     numeric,
     colore         varchar(20)       NOT NULL,

@@ -1,4 +1,5 @@
 # Progetto basi di dati
+Al fine di sperimentare l'uso di uno schema di terzi, abbiamo deciso di utilizzare lo schema ER del gruppo di Carta - Coronado.
 Abbiamo utilizzato lo snake case siccome, a meno che non sia delimitato da apici, postgresql è case-insensitive.
 
 Si assume che tutte le misure siano espresse in centimetri
