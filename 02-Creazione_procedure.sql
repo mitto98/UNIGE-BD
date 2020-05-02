@@ -53,34 +53,34 @@ $$ LANGUAGE plpgsql;
 -------------------------
 -- Metodo di pagamento --
 -------------------------
-CREATE OR REPLACE FUNCTION aggiunti_metodo_pagamento(int, numeric)
+CREATE OR REPLACE FUNCTION aggiungi_metodo_pagamento(int, numeric)
     RETURNS VOID AS
 $$
-    BEGIN
-        INSERT INTO metodo_pagamento(smart_card, versato) VALUES ($1, $2);
-    END;
+BEGIN
+    INSERT INTO metodo_pagamento(smart_card, versato) VALUES ($1, $2);
+END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION aggiunti_metodo_pagamento(int, numeric, varchar(30), varchar(10), date)
+CREATE OR REPLACE FUNCTION aggiungi_metodo_pagamento(int, numeric, varchar(30), varchar(10), date)
     RETURNS VOID AS
 $$
-    BEGIN
-        INSERT INTO carta
-        VALUES ($2,$3,$4,$5);
-        INSERT INTO metodo_pagamento(smart_card, numero_carta, intestatario_carta, circuito_carta, scadenza_carta)
-        VALUES ($1, $2, $3, $4, $5);
-    END;
+BEGIN
+    INSERT INTO carta
+    VALUES ($2, $3, $4, $5);
+    INSERT INTO metodo_pagamento(smart_card, numero_carta, intestatario_carta, circuito_carta, scadenza_carta)
+    VALUES ($1, $2, $3, $4, $5);
+END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION aggiunti_metodo_pagamento(int, char(27), varchar(30))
+CREATE OR REPLACE FUNCTION aggiungi_metodo_pagamento(int, char(27), varchar(30))
     RETURNS VOID AS
 $$
-    BEGIN
-        INSERT INTO rid
-        VALUES ($2,$3);
-        INSERT INTO metodo_pagamento(smart_card, iban, intestatario_conto)
-        VALUES ($1, $2, $3);
-    END;
+BEGIN
+    INSERT INTO rid
+    VALUES ($2, $3);
+    INSERT INTO metodo_pagamento(smart_card, iban, intestatario_conto)
+    VALUES ($1, $2, $3);
+END;
 $$ LANGUAGE plpgsql;
 
 --------------------------
@@ -115,41 +115,75 @@ BEGIN
     INSERT INTO Persona (cf, telefono, eta, n_documento, n_patente)
     VALUES ($1, $2, eta, $3, $4);
 
+    INSERT INTO conducente (n_documento, n_patente)
+    VALUES ($3, $4);
+
     RETURN;
 END;
 $$ LANGUAGE plpgsql;
 
 
-
-CREATE OR REPLACE FUNCTION aggiungi_conducente_secondario(char(16), char(16))
+CREATE OR REPLACE FUNCTION aggiungi_conducente_secondario(char(16), varchar(11))
     RETURNS VOID AS
 $$
 DECLARE
-    owner_address     RECORD;
-    secondary_address RECORD;
+    own_add RECORD;
+    sec_add RECORD;
 BEGIN
-    SELECT count(*) = 1
+    SELECT d.nazione, d.citta, d.cap, d.civico, d.via
+    INTO own_add
     FROM persona p
              JOIN documento d on p.n_documento = d.n_documento
-    WHERE p.cf = $1
-       OR cf = $2;
+    WHERE p.cf = $1;
 
+    SELECT d.nazione, d.citta, d.cap, d.civico, d.via
+    INTO sec_add
+    FROM documento d
+    WHERE d.n_documento = $2;
 
-/*
-    IF docConduc = NULL
+    IF own_add.nazione = sec_add.nazione
+        AND own_add.citta = sec_add.citta
+        AND own_add.cap = sec_add.cap
+        AND own_add.civico = sec_add.civico
+        AND own_add.via = sec_add.via
     THEN
-        INSERT INTO Persona
-        VALUES (codFisc, id_conducente1, telefono, calcolaEta(datanascita), nrDocumento1, nrPatente);
+        UPDATE persona
+        SET id_conducente = (SELECT id_conducente
+                             from conducente
+                             where conducente.n_documento = $2
+                                OR conducente.n_patente = $2)
+        WHERE cf = $1;
+        RETURN;
     ELSE
-        IF isSameAddress(nrPatente, docConduc)
-        THEN
-            INSERT INTO Persona
-            VALUES (codFisc, id_conducente1, telefono, calcolaEta(datanascita), nrDocumento1, nrPatente);
-        ELSE
-            RAISE EXCEPTION 'Inserimento abortito '
-                USING HINT = 'Il conducente scelto non Abita insieme o non esistente';
-        END IF;
+        RAISE EXCEPTION 'Non sono conviventi';
     END IF;
- */
 END;
 $$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION sottoscrivi_abbonamento(timestamp, date, numeric, numeric, numeric, varchar)
+    RETURNS VOID AS
+$$
+DECLARE
+    durata int;
+--    eta    int;
+
+BEGIN
+    SELECT n_giorni INTO durata FROM tipo WHERE periodo = $6;
+
+--    SELECT eta
+--    INTO eta
+--    FROM utente
+--             NATURAL JOIN persona
+--    WHERE smart_card = card;
+
+--    IF eta > 26
+--    THEN
+    INSERT INTO abbonamento(data_inizio, data_fine, data_bonus, bonus_rottamazione, pin_carta, smart_card, tipo)
+    VALUES ($1, $1 + durata * INTERVAL '1 day', $2, $3, $4, $5, $6);
+--    ELSE
+
+--    END IF;
+
+END;
+$$ LANGUAGE plpgsql
