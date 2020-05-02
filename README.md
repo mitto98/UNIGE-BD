@@ -45,7 +45,7 @@ Fare i trigger per rispettare i vincoli:
 ### Giorno 3 ✔
 Inserire i valori dentro le tabelle base
 
-### Giorno 4 ❌
+### Giorno 4 ✔
 Inserire valori di test dentro le tabelle
 
 ### Giorno 5 ❌
