@@ -100,7 +100,7 @@ $$ LANGUAGE plpgsql;
 
 -- Creazione utente
 CREATE OR REPLACE
-    FUNCTION registra_utente(char(16), varchar(11), varchar(10), varchar(10))
+    FUNCTION registra_persona(char(16), varchar(11), varchar(10), varchar(10))
     RETURNS VOID AS
 $$
 DECLARE

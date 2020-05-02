@@ -9,6 +9,7 @@ VALUES ('City Car'),
 -- Tipi di abbonamento
 INSERT INTO tipo
 VALUES ('Annuale', 365, 300, 50),
+       ('Semestrale',150,25, 15),
        ('Mensile', 30, 5, 1);
 
 -- Modelli veicoli
