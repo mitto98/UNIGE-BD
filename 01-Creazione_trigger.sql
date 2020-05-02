@@ -73,7 +73,7 @@ CREATE OR REPLACE FUNCTION check_validita_carta()
     RETURNS TRIGGER AS
 $check_validita_carta$
 BEGIN
-    IF NEW.scadenza >= NOW()
+    IF NEW.scadenza < NOW()
     THEN
         RAISE EXCEPTION 'La carta è scaduta';
     ELSE

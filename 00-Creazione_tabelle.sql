@@ -95,7 +95,7 @@ CREATE TABLE conducente
 CREATE TABLE persona
 (
     cf            char(16)    NOT NULL PRIMARY KEY,
-    CHECK (cf ~ '/^[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]$/i'),
+--    CHECK (cf ~ $$^[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]$/i$$),
     id_conducente int references conducente
         ON DELETE CASCADE,
     telefono      varchar(11) NOT NULL,
@@ -250,7 +250,7 @@ CREATE TABLE abbonamento
 CREATE TABLE utente
 (
     email      varchar(30) PRIMARY KEY,
-    CHECK (email ~ '/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i'),
+--    CHECK (email ~ $$[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$$),
     piva       integer REFERENCES azienda
         ON UPDATE CASCADE
         ON DELETE CASCADE,
@@ -285,7 +285,7 @@ CREATE TABLE prenotazione
             ON UPDATE NO ACTION,
     FOREIGN KEY (smart_card)
         REFERENCES abbonamento (smart_card),
-    CHECK (data_ora_inizio < data_ora_fine)
+    CHECK (data_ora_inizio <= data_ora_fine)
 );
 
 CREATE TABLE modifica_prenotazione

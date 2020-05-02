@@ -66,7 +66,7 @@ CREATE OR REPLACE FUNCTION aggiungi_metodo_pagamento(int, numeric, varchar(30), 
 $$
 BEGIN
     INSERT INTO carta
-    VALUES ($2, $3, $4, $5);
+    VALUES ($2, $4, $3, $5);
     INSERT INTO metodo_pagamento(smart_card, numero_carta, intestatario_carta, circuito_carta, scadenza_carta)
     VALUES ($1, $2, $3, $4, $5);
 END;
@@ -104,7 +104,7 @@ CREATE OR REPLACE
     RETURNS VOID AS
 $$
 DECLARE
-    eta date;
+    eta numeric;
 BEGIN
 
     SELECT DATE_PART('year', NOW()) - DATE_PART('year', documento.data_nascita)
@@ -112,7 +112,7 @@ BEGIN
     FROM documento
     WHERE documento.n_documento = $3;
 
-    INSERT INTO Persona (cf, telefono, eta, n_documento, n_patente)
+    INSERT INTO persona (cf, telefono, eta, n_documento, n_patente)
     VALUES ($1, $2, eta, $3, $4);
 
     INSERT INTO conducente (n_documento, n_patente)
