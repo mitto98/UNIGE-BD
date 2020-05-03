@@ -31,38 +31,31 @@ Si assume che tutte le misure siano espresse in centimetri
 4.  Non si può inserire una carta scaduta
 
 
-## Roadmap
-### Giorno 1 ✔
+## To do list
 CREATE TABLES
 Gestione delle diverse tipologie di utenti, conducenti, bonus e modalità di pagamento.  
 Per le parti non assegnate coprire solo na porzione minimale  
 
-### Giorno 2 ~
 Fare i trigger per rispettare i vincoli:
 * Coprire la porzione di basi di dati relativa a vetture, modelli, parcheggi, abbonamenti, prenotazioni e effettivi utilizzi.
 * Gestione delle diverse tipologie di utenti, conducenti abilitati, bonus e modalità di pagamento.
 
-### Giorno 3 ✔
 Inserire i valori dentro le tabelle base
 
-### Giorno 4 ✔
 Inserire valori di test dentro le tabelle
 
-### Giorno 5 ❌
 CREARE ALMENO TRE PROCEDURE/FUNZIONI
 
-* Vista fatturazione: Per ogni utilizzo concluso mostra le tariffe (se applicabili), senza tenere conto delle penali
+Vista fatturazione: Per ogni utilizzo concluso mostra le tariffe (se applicabili), senza tenere conto delle penali
 
-* Partendo dal punto precedente ottenere il prezzo minore e applicare penali e bonus
+Partendo dal punto precedente ottenere il prezzo minore e applicare penali e bonus
 
-* SELECT semplici (una con differenza e una con outer join)
-  * Determinare i parcheggi in una zona, di una categoria categoria, che abbano una vattura disponibile nelle prossime tre ore
-  * Ottenere coppia utente / veicolo dei noleggi attualmente in corso e l'orario previsto di riconsegna
-  * Determinare i parcheggi che non abbiano nemmeno una prenotazione nella prossima ora 
+SELECT semplici (una con differenza e una con outer join)
+* Determinare i parcheggi in una zona, di una categoria categoria, che abbano una vattura disponibile nelle prossime tre ore
+* Ottenere coppia utente / veicolo dei noleggi attualmente in corso e l'orario previsto di riconsegna
+* Determinare i parcheggi che non abbiano nemmeno una prenotazione nella prossima ora
 
-### Giorno 6 ❌
-* SELECT -> 3 inserimenti, 3 cancellazioni e 3 modifiche significative
-* SELECT complesse (una con GROUP BY, una con sottointerrogazione e una con divisione
-  * Data una vettura, determinare i suoi utilizzi nell'ultima settimana, calcolando i minuti effettivi d'uso e di prenotazione in cui non era usata
-  * Determinare il parcheggio con tempo di noleggio medio maggiore
-  * determinare gli utenti che hanno utilizzato tutte le vetture almeno una volta
+SELECT complesse (una con GROUP BY, una con sottointerrogazione e una con divisione
+* Data una vettura, determinare i suoi utilizzi nell'ultima settimana, calcolando i minuti effettivi d'uso e di prenotazione in cui non era usata
+* Determinare il parcheggio con tempo di noleggio medio maggiore
+* determinare gli utenti che hanno utilizzato tutte le vetture almeno una volta

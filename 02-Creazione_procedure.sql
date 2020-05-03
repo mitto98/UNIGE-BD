@@ -16,6 +16,10 @@ CREATE OR REPLACE FUNCTION tariffa_day(giorni numeric, costo_day numeric, costo_
     RETURNS numeric AS
 $$
 BEGIN
+    IF giorni < 1
+    THEN
+        RETURN -1;
+    END IF;
     RETURN (costo_day * giorni) + (costo_km * chilometri);
 END;
 $$ LANGUAGE plpgsql;
@@ -26,13 +30,18 @@ CREATE OR REPLACE FUNCTION tariffa_week(giorni numeric, costo_week numeric, cost
     RETURNS Numeric AS
 $$
 BEGIN
+    IF giorni < 7
+    THEN
+        RETURN -1;
+    END IF;
     RETURN ROUND(giorni / 7) * costo_week + tariffa_day(MOD(giorni, 7), costo_day, costo_km, chilometri);
 END;
 $$ LANGUAGE plpgsql;
 
 -- Tariffa conveniente
 CREATE OR REPLACE FUNCTION tariffa_conveniente(durata numeric, costo_orario numeric, costo_day numeric,
-                                               costo_week numeric, costo_km numeric, chilometri numeric)
+                                               costo_day_agg numeric, costo_week numeric, costo_km numeric,
+                                               chilometri numeric)
     RETURNS numeric AS
 $$
 BEGIN
@@ -44,7 +53,7 @@ BEGIN
         THEN
             RETURN tariffa_day(durata / 24, costo_day, costo_km, chilometri);
         ELSE
-            RETURN tariffa_week(durata / 24, costo_week, costo_day, costo_km, chilometri);
+            RETURN tariffa_week(durata / 24, costo_week, costo_day_agg, costo_km, chilometri);
         END IF;
     END IF;
 END;
@@ -166,12 +175,10 @@ CREATE OR REPLACE FUNCTION sottoscrivi_abbonamento(timestamp, date, numeric, num
 $$
 DECLARE
     durata int;
---    eta    int;
-
 BEGIN
     SELECT n_giorni INTO durata FROM tipo WHERE periodo = $6;
 
---    SELECT eta
+    --    SELECT eta
 --    INTO eta
 --    FROM utente
 --             NATURAL JOIN persona
@@ -181,9 +188,17 @@ BEGIN
 --    THEN
     INSERT INTO abbonamento(data_inizio, data_fine, data_bonus, bonus_rottamazione, pin_carta, smart_card, tipo)
     VALUES ($1, $1 + durata * INTERVAL '1 day', $2, $3, $4, $5, $6);
---    ELSE
+    --    ELSE
 
 --    END IF;
 
 END;
-$$ LANGUAGE plpgsql
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION diff_in_ore(date, date)
+    RETURNS numeric AS
+$$
+BEGIN
+    return DATE_PART('day', $2 - $1) * 24 + DATE_PART('hour', $2 - $1);
+END;
+$$ LANGUAGE plpgsql;
