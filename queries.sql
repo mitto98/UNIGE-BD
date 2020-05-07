@@ -1,5 +1,5 @@
--- Determinare i parcheggi in una zona, di una categoria categoria,
---   che abbano una vattura disponibile nelle prossime tre ore
+-- Determinare i parcheggi in una zona, di una categoria,
+--   che abbiano una vettura disponibile nelle prossime tre ore
 SELECT p.*
 FROM parcheggio AS p,
      vettura AS v,
@@ -12,6 +12,23 @@ WHERE c.categoria = 'Electric'
   AND v.modello = m.nome_modello
   AND m.categoria = c.categoria
   AND EXTRACT(HOUR FROM current_date) + 3 = EXTRACT(HOUR FROM prenotazione.data_ora_inizio::date);
+
+
+-- Determinare i parcheggi che hanno una prenotazione nella prossima ora
+SELECT p.nome_parcheggio, cat.categoria
+FROM parcheggio AS p,
+     vettura AS v,
+     prenotazione AS pren,
+     modello AS m,
+     categoria AS cat
+WHERE p.nome_parcheggio = v.sede
+  AND v.nome_vettura = pren.nome_vettura
+  AND v.modello = m.nome_modello
+  AND m.categoria = cat.categoria
+  AND EXTRACT(hour FROM current_date) = EXTRACT(hour FROM pren.data_ora_inizio)
+GROUP BY p.nome_parcheggio, cat.categoria
+HAVING count(*) >= 1;
+
 
 -- Ottenere coppia utente / veicolo dei noleggi attualmente in corso e l'orario previsto di riconsegna
 SELECT u.*, v.nome_vettura, v.targa, utilizzo.data_ora_riconsegna
@@ -26,7 +43,7 @@ WHERE prenotazione.smart_card = a.smart_card
   AND prenotazione.numero_prenotazione = utilizzo.numero_prenotazione
   AND utilizzo.data_ora_ritiro::date < utilizzo.data_ora_riconsegna::date;
 
--- Determinare i parcheggi che non abbiano nemmeno una prenotazione nella prossima ora
+-- Determinare i parcheggi che non abbiano nemmeno una prenotazione nella prossima ora ma ne abbiano nell'ora successiva
 SELECT p.nome_parcheggio, cat.categoria
 FROM parcheggio AS p,
      vettura AS v,
@@ -41,16 +58,27 @@ WHERE p.nome_parcheggio = v.sede
 GROUP BY p.nome_parcheggio, cat.categoria
 HAVING count(*) >= 1;
 
+
 --Numero di prenotazioni per utente
 SELECT u.smart_card, u.email, count(*) as numero_prenotazioni
 FROM utente u
          JOIN prenotazione p on u.smart_card = p.smart_card
 GROUP BY u.smart_card, u.email;
 
+--Numero di utenti che sono aziende
+SELECT count(*)
+FROM utente u
+WHERE u.piva IS NOT NULL
+
 -- Vettura con più chilometri
 SELECT vettura.*
 FROM vettura
 WHERE vettura.chilometraggio = (SELECT MAX(v.chilometraggio) FROM vettura v);
+
+-- Vettura con meno chilometri
+SELECT vettura.*
+FROM vettura
+WHERE vettura.chilometraggio = (SELECT MIN(v.chilometraggio) FROM vettura v);
 
 -- Vetture con prenotazioni che hanno tra 10000 e 20000 km
 SELECT v.*
@@ -60,6 +88,18 @@ FROM vettura v
 WHERE v.chilometraggio > 10000
   AND v.chilometraggio <= 20000;
 
+  -- determinare le vetture attrezzate al trasporto anche di animali
+SELECT vettura.*
+FROM vettura
+WHERE vettura.animali IS TRUE;
+
+
+-- Vetture con (almeno) 5 porte
+SELECT v.*
+FROM vettura v
+         JOIN modello m on v.modello = m.nome_modello
+WHERE m.n_porte >=5
+
 -- I parcheggi con vetture elettriche e conteggio
 SELECT p.*, count(v) AS numero_elettrici
 FROM parcheggio p
@@ -67,6 +107,21 @@ FROM parcheggio p
          JOIN modello m on v.modello = m.nome_modello
 WHERE m.categoria = 'Electric'
 GROUP BY p.nome_parcheggio;
+
+
+-- Vetture con più di 100000 km
+SELECT v.*
+FROM vettura v
+WHERE v.chilometraggio > 100000
+
+
+-- Determinare gli utenti che hanno utilizzato tutte le vetture almeno una volta
+SELECT u.email, u.smart_card
+from utente u
+         JOIN prenotazione p on u.smart_card = p.smart_card
+GROUP BY u.smart_card, u.email
+HAVING count(p.nome_vettura) = ALL (SELECT count(*) FROM vettura v)
+
 
 --  Data una vettura, determinare i suoi utilizzi nell'ultima settimana,
 --    calcolando i minuti effettivi d'uso e di prenotazione in cui non era usata
@@ -108,3 +163,10 @@ from utente u
          JOIN prenotazione p on u.smart_card = p.smart_card
 GROUP BY u.smart_card, u.email
 HAVING count(p.nome_vettura) != ALL (SELECT count(*) FROM vettura v)
+
+-- Determinare gli utenti che hanno utilizzato tutte le vetture almeno una volta
+SELECT u.email, u.smart_card
+from utente u
+         JOIN prenotazione p on u.smart_card = p.smart_card
+GROUP BY u.smart_card, u.email
+HAVING count(p.nome_vettura) = ALL (SELECT count(*) FROM vettura v)
